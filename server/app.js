@@ -24,6 +24,8 @@ const allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain)
 
 router.post('/register', function(req, res) {
+    console.log("test111111111111")
+    console.log(req.body.name)
     db.insert([
         req.body.name,
         req.body.email,
@@ -59,6 +61,7 @@ router.post('/register-admin', function(req, res) {
 });
 
 router.post('/login', (req, res) => {
+    console.log("this is logintest*************************")
     db.selectByEmail(req.body.email, (err, user) => {
         if (err) return res.status(500).send('Error on the server.');
         if (!user) return res.status(404).send('No user found.');
