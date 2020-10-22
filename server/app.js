@@ -23,9 +23,39 @@ const allowCrossDomain = function(req, res, next) {
 
 app.use(allowCrossDomain)
 
+const testInsert = () => { 
+    db.insert([
+        "haha",
+        "hehe",
+        "12345678",
+    ], (err) => {
+        console.log("insert: ", err)
+    })
+    console.log("this is test insert*************************")
+}
+
+const testGet = () => { 
+    console.log("this is test Get*************************")
+    db.selectByEmail("test1@gmail.com", (err, user) => {
+        if (err) {
+            console.log("Get error: ", err)
+        }
+        console.log("User: ", user)
+    });
+}
+
+// testGet()
+
+router.post('/connectTest', (req, res) => {
+    console.log("[INFO] Receving data from client!!!!")
+    console.log(req.body)
+    console.log("*********************End")
+})
+
+
 router.post('/register', function(req, res) {
-    console.log("test111111111111")
-    console.log(req.body.name)
+    console.log("[INFO]Start the register process!")
+    console.log(req.body.name, req.body.email, req.body.password)
     db.insert([
         req.body.name,
         req.body.email,
@@ -41,6 +71,24 @@ router.post('/register', function(req, res) {
         });
     });
 });
+
+router.post('/login', (req, res) => {
+    console.log("[INFO]Start the login process!")
+    console.log(req.body.userName, req.body.password)
+    db.selectByEmail(req.body.userName, (err, user) => {
+        if (err) return res.status(
+            
+            500).send('Error on the server.');
+        if (!user) return res.status(404).send('No user found.');
+        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
+        if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
+        let token = jwt.sign({ id: user.id }, config.secret, { expiresIn: 86400 // expires in 24 hours
+        });
+        res.status(200).send({ auth: true, token: token, user: user });
+    });
+})
+
+
 
 router.post('/register-admin', function(req, res) {
     db.insertAdmin([
@@ -60,18 +108,7 @@ router.post('/register-admin', function(req, res) {
     });
 });
 
-router.post('/login', (req, res) => {
-    console.log("this is logintest*************************")
-    db.selectByEmail(req.body.email, (err, user) => {
-        if (err) return res.status(500).send('Error on the server.');
-        if (!user) return res.status(404).send('No user found.');
-        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
-        if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
-        let token = jwt.sign({ id: user.id }, config.secret, { expiresIn: 86400 // expires in 24 hours
-        });
-        res.status(200).send({ auth: true, token: token, user: user });
-    });
-})
+
 
 app.use(router)
 
