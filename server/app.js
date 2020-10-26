@@ -72,12 +72,11 @@ router.post('/register', function(req, res) {
     });
 });
 
-router.post('/login', (req, res) => {
+router.post('/test', (req, res) => {
     console.log("[INFO]Start the login process!")
-    console.log(req.body.userName, req.body.password)
-    db.selectByEmail(req.body.userName, (err, user) => {
+    console.log(req.body.email, req.body.password)
+    db.selectByEmail(req.body.email, (err, user) => {
         if (err) return res.status(
-            
             500).send('Error on the server.');
         if (!user) return res.status(404).send('No user found.');
         let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
