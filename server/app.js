@@ -72,10 +72,14 @@ router.post('/register', function(req, res) {
     });
 });
 
+<<<<<<< HEAD
 router.post('/test1', (req, res) => {
+=======
+router.post('/test', (req, res) => {
+>>>>>>> 2a669e3a9d4013270978814ae878f6887a93a5f0
     console.log("[INFO]Start the login process!")
-    console.log(req.body.userName, req.body.password)
-    db.selectByEmail(req.body.userName, (err, user) => {
+    console.log(req.body.email, req.body.password)
+    db.selectByEmail(req.body.email, (err, user) => {
         if (err) return res.status(
             500).send('Error on the server.');
         if (!user) return res.status(404).send('No user found.');
